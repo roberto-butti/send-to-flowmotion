@@ -79,10 +79,10 @@ feat: connect plugin ui to backend api
 
 ## 7. Storyblok Space-Level Settings Lookup
 
-- [ ] Implement real space-level settings lookup through the Storyblok Management API.
-- [ ] Read `webhook_url` from `space_level_settings`.
-- [ ] Read `http_method` from `space_level_settings`.
-- [ ] Handle missing or invalid settings.
+- [x] Implement real space-level settings lookup through the Storyblok Management API.
+- [x] Read `webhook_url` from `space_level_settings`.
+- [x] Read `http_method` from `space_level_settings`.
+- [x] Handle missing or invalid settings.
 
 Suggested commit:
 

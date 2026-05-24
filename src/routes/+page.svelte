@@ -34,8 +34,35 @@
 		language?: string;
 	};
 
+	type ConfigResponse = {
+		authenticated: boolean;
+		configured: boolean;
+		connectUrl?: string;
+		settings?: {
+			hasWebhookUrl: boolean;
+			httpMethod?: string;
+		};
+		setup?: {
+			requiredKeys: string[];
+		};
+		missing?: string[];
+	};
+
+	type ConfigStatus = 'idle' | 'loading' | 'loaded' | 'error';
+	type SendStatus = 'idle' | 'sending' | 'sent' | 'error';
+
 	let context: StoryblokContext | undefined = $state();
 	let hasRequestedContext = $state(false);
+	let config: ConfigResponse | undefined = $state();
+	let configStatus = $state<ConfigStatus>('idle');
+	let configError = $state('');
+	let sendStatus = $state<SendStatus>('idle');
+	let sendMessage = $state('');
+	let configLoadKey = '';
+
+	let canSend = $derived(
+		Boolean(context && configStatus === 'loaded' && config?.authenticated && config.configured)
+	);
 
 	const mockContext: StoryblokContext = {
 		story: {
@@ -133,11 +160,79 @@
 			(message.action === 'get-context' || message.action === 'loaded' || message.story) &&
 			message.story
 		) {
-			context = {
+			setContext({
 				story: message.story,
 				spaceId: message.spaceId,
 				language: message.language
-			};
+			});
+		}
+	}
+
+	function setContext(nextContext: StoryblokContext) {
+		context = nextContext;
+
+		const nextConfigLoadKey = `${nextContext.spaceId ?? 'unknown'}:${nextContext.story.uuid ?? nextContext.story.id ?? nextContext.story.name}`;
+		if (configLoadKey === nextConfigLoadKey) return;
+
+		configLoadKey = nextConfigLoadKey;
+		loadConfig(nextContext);
+	}
+
+	async function loadConfig(activeContext: StoryblokContext) {
+		configStatus = 'loading';
+		configError = '';
+		sendStatus = 'idle';
+		sendMessage = '';
+
+		try {
+			const response = await fetch('/api/config', {
+				headers: {
+					'X-Storyblok-Space-Id': String(activeContext.spaceId ?? '')
+				}
+			});
+
+			if (!response.ok) {
+				throw new Error(`Config request failed with status ${response.status}.`);
+			}
+
+			config = (await response.json()) as ConfigResponse;
+			configStatus = 'loaded';
+		} catch (error) {
+			config = undefined;
+			configStatus = 'error';
+			configError = error instanceof Error ? error.message : 'Unable to load plugin configuration.';
+		}
+	}
+
+	async function sendToFlowmotion() {
+		if (!context || !canSend || sendStatus === 'sending') return;
+
+		sendStatus = 'sending';
+		sendMessage = '';
+
+		try {
+			const response = await fetch('/api/trigger-webhook', {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json'
+				},
+				body: JSON.stringify({
+					story: context.story,
+					spaceId: context.spaceId,
+					language: context.language ?? 'default'
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error(`Webhook request failed with status ${response.status}.`);
+			}
+
+			const result = (await response.json()) as { message?: string };
+			sendStatus = 'sent';
+			sendMessage = result.message ?? 'Story sent to Flowmotion.';
+		} catch (error) {
+			sendStatus = 'error';
+			sendMessage = error instanceof Error ? error.message : 'Unable to send story to Flowmotion.';
 		}
 	}
 
@@ -151,7 +246,7 @@
 			if (context || !ENABLE_MOCK_CONTEXT) return;
 
 			logAppBridge('Using mock context', mockContext);
-			context = mockContext;
+			setContext(mockContext);
 		}, MOCK_CONTEXT_DELAY);
 
 		return () => {
@@ -209,12 +304,58 @@
 			{/if}
 		</div>
 
+		<div class="min-w-0 rounded-md border border-slate-200 bg-white p-3 text-sm">
+			{#if configStatus === 'idle' || configStatus === 'loading'}
+				<p class="text-slate-600">Checking plugin configuration.</p>
+			{:else if configStatus === 'error'}
+				<p class="font-medium text-red-700">Configuration check failed.</p>
+				<p class="mt-1 break-words text-red-600">{configError}</p>
+			{:else if config && !config.authenticated}
+				<p class="font-medium text-slate-900">Connect Storyblok</p>
+				<p class="mt-1 text-slate-600">
+					Authentication is required before reading plugin settings.
+				</p>
+			{:else if config && !config.configured}
+				<p class="font-medium text-slate-900">Please set up Send to Flowmotion.</p>
+				<p class="mt-1 text-slate-600">Add these keys in the plugin space-level settings:</p>
+				<ul class="mt-2 grid gap-1 text-slate-700">
+					{#each config.setup?.requiredKeys ?? ['webhook_url', 'http_method'] as key (key)}
+						<li><code class="rounded bg-slate-100 px-1 py-0.5">{key}</code></li>
+					{/each}
+				</ul>
+				{#if config.missing?.length}
+					<ul class="mt-2 grid gap-1 text-xs text-slate-500">
+						{#each config.missing as item (item)}
+							<li>{item}</li>
+						{/each}
+					</ul>
+				{/if}
+			{:else if config}
+				<p class="font-medium text-emerald-700">Plugin configured.</p>
+				<p class="mt-1 text-slate-600">
+					Webhook is configured. Method: {config.settings?.httpMethod ?? 'POST'}.
+				</p>
+			{/if}
+		</div>
+
 		<button
 			type="button"
-			disabled
-			class="rounded-md bg-slate-300 px-4 py-2 text-sm font-medium text-slate-600"
+			disabled={!canSend || sendStatus === 'sending'}
+			onclick={sendToFlowmotion}
+			class={[
+				'rounded-md px-4 py-2 text-sm font-medium',
+				canSend && sendStatus !== 'sending'
+					? 'bg-teal-700 text-white hover:bg-teal-800'
+					: 'bg-slate-300 text-slate-600'
+			]}
 		>
-			Send to Flowmotion
+			{sendStatus === 'sending' ? 'Sending...' : 'Send to Flowmotion'}
 		</button>
+
+		{#if sendStatus === 'sent'}
+			<p class="text-sm font-medium text-emerald-700">{sendMessage}</p>
+		{:else if sendStatus === 'error'}
+			<p class="text-sm font-medium break-words text-red-700">{sendMessage}</p>
+		{/if}
 	</section>
 </main>

@@ -67,9 +67,9 @@ feat: add backend api route skeleton
 
 ## 6. Client API Integration
 
-- [ ] Wire the Svelte UI to call `/api/config`.
-- [ ] Show configured, missing setup, and auth-required states.
-- [ ] Call `/api/trigger-webhook` from the send button.
+- [x] Wire the Svelte UI to call `/api/config`.
+- [x] Show configured, missing setup, and auth-required states.
+- [x] Call `/api/trigger-webhook` from the send button.
 
 Suggested commit:
 

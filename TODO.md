@@ -54,10 +54,10 @@ feat: add local mock context for development
 
 ## 5. Backend API Skeleton
 
-- [ ] Add `GET /api/config`.
-- [ ] Add `POST /api/trigger-webhook`.
-- [ ] Return mocked responses first.
-- [ ] Establish the client/server contract before adding real Storyblok API logic.
+- [x] Add `GET /api/config`.
+- [x] Add `POST /api/trigger-webhook`.
+- [x] Return mocked responses first.
+- [x] Establish the client/server contract before adding real Storyblok API logic.
 
 Suggested commit:
 
@@ -77,17 +77,17 @@ Suggested commit:
 feat: connect plugin ui to backend api
 ```
 
-## 7. Storyblok Datasource Lookup
+## 7. Storyblok Space-Level Settings Lookup
 
-- [ ] Implement real datasource lookup through the Storyblok Management API.
-- [ ] Read datasource slug `send-to-flowmotion-config`.
-- [ ] Read entry name `webhook_url`.
-- [ ] Handle missing datasource and missing entry states.
+- [ ] Implement real space-level settings lookup through the Storyblok Management API.
+- [ ] Read `webhook_url` from `space_level_settings`.
+- [ ] Read `http_method` from `space_level_settings`.
+- [ ] Handle missing or invalid settings.
 
 Suggested commit:
 
 ```txt
-feat: load flowmotion webhook config from storyblok datasource
+feat: load flowmotion webhook config from storyblok space settings
 ```
 
 ## 8. OAuth / Session Handling
@@ -158,7 +158,7 @@ docs: document setup and deployment
 - [ ] Local HTTPS works.
 - [ ] The iframe loads in Storyblok.
 - [ ] App Bridge returns story context.
-- [ ] The config datasource is read.
+- [ ] The space-level plugin settings are read.
 - [ ] The Flowmotion webhook is triggered.
 - [ ] Missing config and auth-required states work.
 

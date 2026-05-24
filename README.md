@@ -1,26 +1,41 @@
-# sv
+# Send to Flowmotion
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Storyblok Tool Plugin built with SvelteKit.
 
-## Creating a project
+The plugin is designed to run inside the Storyblok Visual Editor Tools panel, read the current story context, and send that story payload to a configured Flowmotion webhook.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Local HTTPS Development
+
+Storyblok loads Tool Plugins inside an iframe from the Visual Editor, so the local development server must be available over HTTPS.
+
+This project uses local certificate files from `.cert/` when they exist:
+
+- `.cert/localhost-key.pem`
+- `.cert/localhost-cert.pem`
+
+Create trusted local certificates with `mkcert`:
 
 ```sh
-# create a new project
-npx sv create my-app
+mkcert -install
+mkdir -p .cert
+mkcert -key-file .cert/localhost-key.pem -cert-file .cert/localhost-cert.pem localhost 127.0.0.1 ::1
 ```
 
-To recreate this project with the same configuration:
+Then start the development server:
 
 ```sh
-# recreate this project
-bun x sv@0.15.3 create --template minimal --types ts --add tailwindcss="plugins:typography,forms" mcp="ide:other+setup:remote" prettier --install bun send-to-flowmotion
+npm run dev
 ```
+
+Open:
+
+```txt
+https://localhost:5173
+```
+
+If the browser shows `net::ERR_CERT_AUTHORITY_INVALID`, the certificate authority is not trusted yet. Run `mkcert -install` from your normal terminal, restart the dev server, and reload the browser.
 
 ## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```sh
 npm run dev

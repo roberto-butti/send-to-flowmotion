@@ -14,10 +14,31 @@ Create a local `.env` file with the same Tool Plugin slug configured in Storyblo
 PUBLIC_STORYBLOK_TOOL_PLUGIN_SLUG=your-org@send-to-flowmotion
 PUBLIC_DEBUG_APP_BRIDGE=false
 PUBLIC_ENABLE_MOCK_CONTEXT=false
+APP_CLIENT_ID=your-storyblok-app-client-id
+APP_CLIENT_SECRET=your-storyblok-app-client-secret
+APP_URL=https://localhost:5173
 ```
 
 Set `PUBLIC_DEBUG_APP_BRIDGE=true` when you need to inspect App Bridge messages in the browser console.
 Set `PUBLIC_ENABLE_MOCK_CONTEXT=true` when you want the plugin to show local mock story data outside Storyblok.
+
+The `APP_*` variables are used by the official Storyblok OAuth helper:
+
+- `APP_CLIENT_ID`: Client ID from the Storyblok app OAuth settings.
+- `APP_CLIENT_SECRET`: Client secret from the Storyblok app OAuth settings. Keep this server-side only.
+- `APP_URL`: Absolute HTTPS base URL for this plugin app.
+
+Register this OAuth callback URL in the Storyblok app settings:
+
+```txt
+https://localhost:5173/api/connect/callback
+```
+
+The sign-in URL remains:
+
+```txt
+https://localhost:5173/api/connect/storyblok
+```
 
 This project uses local certificate files from `.cert/` when they exist:
 

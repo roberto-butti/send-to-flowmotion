@@ -194,7 +194,7 @@ STORYBLOK_CLIENT_ID=
 STORYBLOK_CLIENT_SECRET=
 PUBLIC_STORYBLOK_TOOL_PLUGIN_SLUG=your-org@send-to-flowmotion
 PUBLIC_APP_URL=https://your-plugin.example.com
-STORYBLOK_OAUTH_REDIRECT_URI=https://your-plugin.example.com/oauth/callback
+STORYBLOK_OAUTH_REDIRECT_URI=https://your-plugin.example.com/api/connect/callback
 ```
 
 The OAuth redirect URI for a Tool Plugin should follow Storyblok's Tool Plugin OAuth flow. Storyblok documents the Tool Plugin redirect target as:

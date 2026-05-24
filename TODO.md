@@ -92,9 +92,11 @@ feat: load flowmotion webhook config from storyblok space settings
 
 ## 8. OAuth / Session Handling
 
-- [ ] Add Storyblok OAuth/session handling needed by Management API calls.
-- [ ] Store and validate the session server-side.
-- [ ] Return an authentication-required state when no valid session exists.
+- [x] Install Storyblok's official `@storyblok/app-extension-auth` helper.
+- [x] Add `/api/connect/storyblok` and `/api/connect/callback`.
+- [x] Return an authentication-required state when no valid session exists.
+- [ ] Store and validate the session server-side in a production-ready store.
+- [ ] Use the authenticated session for Management API calls.
 
 Suggested commit:
 

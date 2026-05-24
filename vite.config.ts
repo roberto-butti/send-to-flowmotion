@@ -10,6 +10,9 @@ const hasLocalCertificate = existsSync(keyPath) && existsSync(certPath);
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
+	ssr: {
+		noExternal: ['@storyblok/app-extension-auth']
+	},
 	server: hasLocalCertificate
 		? {
 				https: {

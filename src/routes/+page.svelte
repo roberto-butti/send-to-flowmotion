@@ -123,6 +123,11 @@
 		);
 	}
 
+	function getUserId() {
+		const searchParams = new URLSearchParams(window.location.search);
+		return searchParams.get('user_id') ?? searchParams.get('userId') ?? undefined;
+	}
+
 	function normalizeContextMessage(data: unknown): StoryblokContextMessage | undefined {
 		if (!isRecord(data)) return;
 
@@ -187,7 +192,8 @@
 		try {
 			const response = await fetch('/api/config', {
 				headers: {
-					'X-Storyblok-Space-Id': String(activeContext.spaceId ?? '')
+					'X-Storyblok-Space-Id': String(activeContext.spaceId ?? ''),
+					'X-Storyblok-User-Id': getUserId() ?? ''
 				}
 			});
 
@@ -202,6 +208,12 @@
 			configStatus = 'error';
 			configError = error instanceof Error ? error.message : 'Unable to load plugin configuration.';
 		}
+	}
+
+	function connectStoryblok() {
+		if (!config?.connectUrl) return;
+
+		window.location.href = config.connectUrl;
 	}
 
 	async function sendToFlowmotion() {
@@ -315,6 +327,20 @@
 				<p class="mt-1 text-slate-600">
 					Authentication is required before reading plugin settings.
 				</p>
+				<button
+					type="button"
+					onclick={connectStoryblok}
+					class="mt-3 rounded-md bg-teal-700 px-3 py-2 text-sm font-medium text-white hover:bg-teal-800"
+				>
+					Connect Storyblok
+				</button>
+				{#if config.missing?.length}
+					<ul class="mt-2 grid gap-1 text-xs text-slate-500">
+						{#each config.missing as item (item)}
+							<li>{item}</li>
+						{/each}
+					</ul>
+				{/if}
 			{:else if config && !config.configured}
 				<p class="font-medium text-slate-900">Please set up Send to Flowmotion.</p>
 				<p class="mt-1 text-slate-600">Add these keys in the plugin space-level settings:</p>

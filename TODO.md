@@ -42,9 +42,9 @@ feat: read story context from storyblok app bridge
 
 ## 4. Local Mock Mode
 
-- [ ] Add a development fallback or mock context.
-- [ ] Make the plugin testable outside Storyblok.
-- [ ] Keep the mock mode useful for article screenshots and local iteration.
+- [x] Add a development fallback or mock context.
+- [x] Make the plugin testable outside Storyblok.
+- [x] Keep the mock mode useful for article screenshots and local iteration.
 
 Suggested commit:
 

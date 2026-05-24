@@ -13,9 +13,11 @@ Create a local `.env` file with the same Tool Plugin slug configured in Storyblo
 ```sh
 PUBLIC_STORYBLOK_TOOL_PLUGIN_SLUG=your-org@send-to-flowmotion
 PUBLIC_DEBUG_APP_BRIDGE=false
+PUBLIC_ENABLE_MOCK_CONTEXT=false
 ```
 
 Set `PUBLIC_DEBUG_APP_BRIDGE=true` when you need to inspect App Bridge messages in the browser console.
+Set `PUBLIC_ENABLE_MOCK_CONTEXT=true` when you want the plugin to show local mock story data outside Storyblok.
 
 This project uses local certificate files from `.cert/` when they exist:
 

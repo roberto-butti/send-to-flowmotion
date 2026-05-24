@@ -4,7 +4,9 @@
 
 	const PLUGIN_SLUG = env.PUBLIC_STORYBLOK_TOOL_PLUGIN_SLUG || 'your-org@send-to-flowmotion';
 	const DEBUG_APP_BRIDGE = env.PUBLIC_DEBUG_APP_BRIDGE === 'true';
+	const ENABLE_MOCK_CONTEXT = env.PUBLIC_ENABLE_MOCK_CONTEXT === 'true';
 	const IFRAME_HEIGHT = 320;
+	const MOCK_CONTEXT_DELAY = 800;
 
 	type StoryblokStory = {
 		id?: number | string;
@@ -34,6 +36,19 @@
 
 	let context: StoryblokContext | undefined = $state();
 	let hasRequestedContext = $state(false);
+
+	const mockContext: StoryblokContext = {
+		story: {
+			id: 123456789,
+			uuid: 'mock-story-uuid',
+			name: 'Article created from local mock context',
+			slug: 'article-created-from-local-mock-context',
+			full_slug: 'articles/article-created-from-local-mock-context',
+			content: {}
+		},
+		spaceId: '123456',
+		language: 'default'
+	};
 
 	function logAppBridge(message: string, data?: unknown) {
 		if (!DEBUG_APP_BRIDGE) return;
@@ -132,7 +147,15 @@
 		postToStoryblok('getContext');
 		hasRequestedContext = true;
 
+		const mockContextTimer = window.setTimeout(() => {
+			if (context || !ENABLE_MOCK_CONTEXT) return;
+
+			logAppBridge('Using mock context', mockContext);
+			context = mockContext;
+		}, MOCK_CONTEXT_DELAY);
+
 		return () => {
+			window.clearTimeout(mockContextTimer);
 			window.removeEventListener('message', handleMessage);
 		};
 	});
@@ -154,6 +177,9 @@
 		<div class="min-w-0 rounded-md border border-dashed border-slate-300 bg-slate-50 p-3">
 			{#if context}
 				<p class="text-sm font-medium break-words text-slate-900">Story: {context.story.name}</p>
+				{#if ENABLE_MOCK_CONTEXT && context === mockContext}
+					<p class="mt-1 text-xs text-slate-500">Local mock context</p>
+				{/if}
 				<dl class="mt-3 grid gap-3 text-sm text-slate-600">
 					<div class="grid min-w-0 gap-1">
 						<dt class="text-xs font-medium tracking-wide text-slate-500 uppercase">Slug</dt>

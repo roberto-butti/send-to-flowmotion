@@ -28,11 +28,11 @@ feat: add tool plugin shell
 
 ## 3. App Bridge Context
 
-- [ ] Add the Storyblok App Bridge `postMessage` flow.
-- [ ] Request the current Storyblok context.
-- [ ] Listen for Storyblok messages.
-- [ ] Resize the iframe.
-- [ ] Display the current story name when available.
+- [x] Add the Storyblok App Bridge `postMessage` flow.
+- [x] Request the current Storyblok context.
+- [x] Listen for Storyblok messages.
+- [x] Resize the iframe.
+- [x] Display the current story name when available.
 
 Suggested commit:
 

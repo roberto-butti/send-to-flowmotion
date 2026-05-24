@@ -8,6 +8,15 @@ The plugin is designed to run inside the Storyblok Visual Editor Tools panel, re
 
 Storyblok loads Tool Plugins inside an iframe from the Visual Editor, so the local development server must be available over HTTPS.
 
+Create a local `.env` file with the same Tool Plugin slug configured in Storyblok:
+
+```sh
+PUBLIC_STORYBLOK_TOOL_PLUGIN_SLUG=your-org@send-to-flowmotion
+PUBLIC_DEBUG_APP_BRIDGE=false
+```
+
+Set `PUBLIC_DEBUG_APP_BRIDGE=true` when you need to inspect App Bridge messages in the browser console.
+
 This project uses local certificate files from `.cert/` when they exist:
 
 - `.cert/localhost-key.pem`

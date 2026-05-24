@@ -1,3 +1,15 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+html,
+body {
+	margin: 0;
+	overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}

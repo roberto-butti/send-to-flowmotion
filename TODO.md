@@ -144,10 +144,10 @@ feat: polish tool plugin editor states
 
 ## 12. Production Readiness
 
-- [ ] Add environment variable documentation.
-- [ ] Add deployment notes for Vercel or Netlify.
-- [ ] Add Storyblok plugin registration notes.
-- [ ] Update the README with the final setup flow.
+- [x] Add environment variable documentation.
+- [x] Add deployment notes for Vercel or Netlify.
+- [x] Add Storyblok plugin registration notes.
+- [x] Update the README with the final setup flow.
 
 Suggested commit:
 

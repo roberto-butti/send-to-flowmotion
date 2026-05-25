@@ -50,6 +50,10 @@
 
 	type ConfigStatus = 'idle' | 'loading' | 'loaded' | 'error';
 	type SendStatus = 'idle' | 'sending' | 'sent' | 'error';
+	type TriggerWebhookResponse = {
+		message?: string;
+		error?: string;
+	};
 
 	let context: StoryblokContext | undefined = $state();
 	let hasRequestedContext = $state(false);
@@ -226,7 +230,9 @@
 			const response = await fetch('/api/trigger-webhook', {
 				method: 'POST',
 				headers: {
-					'content-type': 'application/json'
+					'content-type': 'application/json',
+					'X-Storyblok-Space-Id': String(context.spaceId ?? ''),
+					'X-Storyblok-User-Id': getUserId() ?? ''
 				},
 				body: JSON.stringify({
 					story: context.story,
@@ -235,11 +241,12 @@
 				})
 			});
 
+			const result = (await response.json().catch(() => ({}))) as TriggerWebhookResponse;
+
 			if (!response.ok) {
-				throw new Error(`Webhook request failed with status ${response.status}.`);
+				throw new Error(result.error ?? `Webhook request failed with status ${response.status}.`);
 			}
 
-			const result = (await response.json()) as { message?: string };
 			sendStatus = 'sent';
 			sendMessage = result.message ?? 'Story sent to Flowmotion.';
 		} catch (error) {

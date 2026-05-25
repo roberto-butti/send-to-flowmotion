@@ -96,7 +96,7 @@ feat: load flowmotion webhook config from storyblok space settings
 - [x] Add `/api/connect/storyblok` and `/api/connect/callback`.
 - [x] Return an authentication-required state when no valid session exists.
 - [ ] Store and validate the session server-side in a production-ready store.
-- [ ] Use the authenticated session for Management API calls.
+- [x] Use the authenticated session for Management API calls.
 
 Suggested commit:
 
@@ -106,10 +106,10 @@ feat: add storyblok oauth session handling
 
 ## 9. Webhook Forwarding
 
-- [ ] Implement real Flowmotion webhook forwarding in `POST /api/trigger-webhook`.
-- [ ] Use the story context payload from the frontend.
-- [ ] Resolve the configured webhook URL on the backend.
-- [ ] Return success and failure responses for the UI.
+- [x] Implement real Flowmotion webhook forwarding in `POST /api/trigger-webhook`.
+- [x] Use the story context payload from the frontend.
+- [x] Resolve the configured webhook URL on the backend.
+- [x] Return success and failure responses for the UI.
 
 Suggested commit:
 

@@ -28,7 +28,7 @@ type AppProvisionsResponse = {
 export async function getFlowmotionConfig(session: AppSession): Promise<FlowmotionConfig> {
 	const provision = await getInstalledToolPluginProvision(session);
 	const settings = readSpaceLevelSettings(provision.space_level_settings);
-	const webhookUrl = readStringSetting(settings.webhook_url);
+	const webhookUrl = readWebhookUrlSetting(settings.webhook_url);
 	const httpMethod = readStringSetting(settings.http_method)?.toUpperCase();
 	const missing = getMissingSettings({ webhookUrl, httpMethod });
 
@@ -72,7 +72,7 @@ async function getInstalledToolPluginProvision(session: AppSession) {
 	return provision;
 }
 
-function getPluginSlug() {
+export function getPluginSlug() {
 	return (
 		publicEnv.PUBLIC_STORYBLOK_TOOL_PLUGIN_SLUG ||
 		env.STORYBLOK_TOOL_PLUGIN_SLUG ||
@@ -94,11 +94,22 @@ function readStringSetting(value: unknown) {
 	return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
+function readWebhookUrlSetting(value: unknown) {
+	const webhookUrl = readStringSetting(value);
+	if (!webhookUrl) return undefined;
+
+	try {
+		return new URL(webhookUrl).toString();
+	} catch {
+		return undefined;
+	}
+}
+
 function getMissingSettings(config: Pick<FlowmotionConfig, 'httpMethod' | 'webhookUrl'>) {
 	const missing: string[] = [];
 
 	if (!config.webhookUrl) {
-		missing.push('Add the webhook_url setting.');
+		missing.push('Add a valid absolute webhook_url setting.');
 	}
 
 	if (!config.httpMethod) {

@@ -5,7 +5,7 @@
 	const PLUGIN_SLUG = env.PUBLIC_STORYBLOK_TOOL_PLUGIN_SLUG || 'your-org@send-to-flowmotion';
 	const DEBUG_APP_BRIDGE = env.PUBLIC_DEBUG_APP_BRIDGE === 'true';
 	const ENABLE_MOCK_CONTEXT = env.PUBLIC_ENABLE_MOCK_CONTEXT === 'true';
-	const IFRAME_HEIGHT = 320;
+	const IFRAME_HEIGHT = 680;
 	const MOCK_CONTEXT_DELAY = 800;
 
 	type StoryblokStory = {
@@ -294,28 +294,6 @@
 				{#if ENABLE_MOCK_CONTEXT && context === mockContext}
 					<p class="mt-1 text-xs text-slate-500">Local mock context</p>
 				{/if}
-				<dl class="mt-3 grid gap-3 text-sm text-slate-600">
-					<div class="grid min-w-0 gap-1">
-						<dt class="text-xs font-medium tracking-wide text-slate-500 uppercase">Slug</dt>
-						<dd class="min-w-0 break-words text-slate-700">
-							{context.story.full_slug ?? context.story.slug ?? 'Unknown'}
-						</dd>
-					</div>
-					<div class="grid min-w-0 gap-1">
-						<dt class="text-xs font-medium tracking-wide text-slate-500 uppercase">Story ID</dt>
-						<dd class="min-w-0 break-words text-slate-700">{context.story.id ?? 'Unknown'}</dd>
-					</div>
-					<div class="grid min-w-0 gap-1">
-						<dt class="text-xs font-medium tracking-wide text-slate-500 uppercase">Space ID</dt>
-						<dd class="min-w-0 break-words text-slate-700">{context.spaceId ?? 'Unknown'}</dd>
-					</div>
-					{#if context.language}
-						<div class="grid min-w-0 gap-1">
-							<dt class="text-xs font-medium tracking-wide text-slate-500 uppercase">Language</dt>
-							<dd class="min-w-0 break-words text-slate-700">{context.language}</dd>
-						</div>
-					{/if}
-				</dl>
 			{:else if hasRequestedContext}
 				<p class="text-sm text-slate-600">Waiting for Storyblok context.</p>
 			{:else}
@@ -389,6 +367,33 @@
 			<p class="text-sm font-medium text-emerald-700">{sendMessage}</p>
 		{:else if sendStatus === 'error'}
 			<p class="text-sm font-medium break-words text-red-700">{sendMessage}</p>
+		{/if}
+
+		{#if context}
+			<div class="min-w-0 rounded-md border border-slate-200 bg-slate-50 p-3">
+				<dl class="grid gap-3 text-sm text-slate-600">
+					<div class="grid min-w-0 gap-1">
+						<dt class="text-xs font-medium tracking-wide text-slate-500 uppercase">Slug</dt>
+						<dd class="min-w-0 break-words text-slate-700">
+							{context.story.full_slug ?? context.story.slug ?? 'Unknown'}
+						</dd>
+					</div>
+					<div class="grid min-w-0 gap-1">
+						<dt class="text-xs font-medium tracking-wide text-slate-500 uppercase">Story ID</dt>
+						<dd class="min-w-0 break-words text-slate-700">{context.story.id ?? 'Unknown'}</dd>
+					</div>
+					<div class="grid min-w-0 gap-1">
+						<dt class="text-xs font-medium tracking-wide text-slate-500 uppercase">Space ID</dt>
+						<dd class="min-w-0 break-words text-slate-700">{context.spaceId ?? 'Unknown'}</dd>
+					</div>
+					{#if context.language}
+						<div class="grid min-w-0 gap-1">
+							<dt class="text-xs font-medium tracking-wide text-slate-500 uppercase">Language</dt>
+							<dd class="min-w-0 break-words text-slate-700">{context.language}</dd>
+						</div>
+					{/if}
+				</dl>
+			</div>
 		{/if}
 	</section>
 </main>
